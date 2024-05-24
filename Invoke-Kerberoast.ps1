@@ -985,21 +985,6 @@ The raw DirectoryServices.SearchResult object, if -Raw is enabled.
 
             $UserSearcher.filter = "(&(samAccountType=805306368)$Filter)"
             Write-Verbose "[Get-DomainUser] filter string: $($UserSearcher.filter)"
-
-            if ($PSBoundParameters['FindOne']) { $Results = $UserSearcher.FindOne() }
-            else { $Results = $UserSearcher.FindAll() }
-            $Results | Where-Object {$_} | ForEach-Object {
-                if ($PSBoundParameters['Raw']) {
-                    # return raw result objects
-                    $User = $_
-                    $User.PSObject.TypeNames.Insert(0, 'PowerView.User.Raw')
-                }
-                else {
-                    $User = Convert-LDAPProperty -Properties $_.Properties
-                    $User.PSObject.TypeNames.Insert(0, 'PowerView.User')
-                }
-                $User
-            }
             if ($Results) {
                 try { $Results.dispose() }
                 catch {
